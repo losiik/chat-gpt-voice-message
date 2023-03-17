@@ -13,6 +13,7 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 print(os.getenv('TG_TOKEN'))
+print(os.getenv('GPT_TOKEN'))
 bot = Bot(token=os.getenv('TG_TOKEN'))
 
 dp = Dispatcher(bot)

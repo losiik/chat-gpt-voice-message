@@ -1,4 +1,5 @@
 import os
+import time
 
 import openai
 from aiogram import types
@@ -10,6 +11,10 @@ import langid
 import speech_recognition as sr
 import soundfile
 from dotenv import load_dotenv, find_dotenv
+import asyncio
+import aioschedule
+import requests
+
 
 load_dotenv(find_dotenv())
 print(os.getenv('TG_TOKEN'))
@@ -98,6 +103,81 @@ async def voice_message_absorb(message: types.Message):
     print(True)
 
 
+async def send_to_chanel():
+    chanel_id = -1001393815765
+
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt='сделай предсказание на сегодня',
+        temperature=0.9,
+        max_tokens=1500,
+        top_p=1,
+        frequency_penalty=0.0,
+        presence_penalty=0.6,
+        stop=[" Human:", " AI:"]
+    )
+    print(response['choices'][0]['text'])
+
+    response_img = openai.Image.create(
+        prompt="нарисуй в виде мультика: " + response['choices'][0]['text'],
+        # prompt="Виски является наиболее распространённым и самым популярным алкогольным напитком в мире.",
+        n=1,
+        size="1024x1024"
+    )
+
+    image_url_1 = response_img['data'][0]['url']
+
+    response_img = openai.Image.create(
+        prompt=response['choices'][0]['text'],
+        n=1,
+        size="1024x1024"
+    )
+
+    image_url_2 = response_img['data'][0]['url']
+
+    response_img = openai.Image.create(
+        prompt="draw in pixar style: " + response['choices'][0]['text'],
+        n=1,
+        size="1024x1024"
+    )
+
+    image_url_3 = response_img['data'][0]['url']
+
+    r = requests.get(image_url_1, stream=True)
+    with open('img_1.png', 'wb') as out_file:
+        out_file.write(r.content)
+
+    r = requests.get(image_url_2, stream=True)
+    with open('img_2.png', 'wb') as out_file:
+        out_file.write(r.content)
+
+    r = requests.get(image_url_3, stream=True)
+    with open('img_3.png', 'wb') as out_file:
+        out_file.write(r.content)
+
+    media = types.MediaGroup()
+    media.attach_photo(types.InputFile('img_1.png'), 'Превосходная фотография 1')
+    media.attach_photo(types.InputFile('img_2.png'), 'Превосходная фотография 2')
+    media.attach_photo(types.InputFile('img_3.png'), 'Превосходная фотография 3')
+
+    voice = convert_text_to_voice(response['choices'][0]['text'], langid.classify(response['choices'][0]['text'])[0])
+
+    await bot.send_message(chanel_id, response['choices'][0]['text'])
+    await bot.send_media_group(chanel_id, media=media)
+    await bot.send_voice(chanel_id, voice)
+
+
+async def scheduler():
+    aioschedule.every().day.at("3:05").do(send_to_chanel)
+    while True:
+        await aioschedule.run_pending()
+        await asyncio.sleep(1)
+
+
+async def on_startup(_):
+    asyncio.create_task(scheduler())
+
+
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
 

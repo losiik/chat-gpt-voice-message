@@ -169,16 +169,17 @@ async def send_to_chanel():
     await bot.send_voice(chanel_id, voice)
 
 
-async def scheduler():
+async def scheduler_func():
     print('in func')
-    aioschedule.every().day.at("3:45").do(send_to_chanel)
+    aioschedule.every().day.at("3:55").do(send_to_chanel)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)
 
 
 async def on_startup(_):
-    asyncio.create_task(scheduler())
+    print('bot start')
+    asyncio.create_task(scheduler_func())
 
 
 if __name__ == "__main__":

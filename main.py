@@ -93,6 +93,7 @@ async def voice_message_absorb(message: types.Message):
         stop=[" Human:", " AI:"]
     )
     print(response)
+
     await message.answer(response['choices'][0]['text'])
 
     print(langid.classify(response['choices'][0]['text']))

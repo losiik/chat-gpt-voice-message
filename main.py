@@ -169,7 +169,7 @@ async def send_to_chanel():
 
 
 async def scheduler():
-    aioschedule.every().day.at("3:35").do(send_to_chanel)
+    aioschedule.every().day.at("3:40").do(send_to_chanel)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)

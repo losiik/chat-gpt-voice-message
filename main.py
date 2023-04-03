@@ -108,7 +108,7 @@ async def send_to_chanel():
 
     response = openai.Completion.create(
         model="text-davinci-003",
-        prompt='сделай предсказание на сегодня',
+        prompt='сделай милое предсказание на сегодня',
         temperature=0.9,
         max_tokens=1500,
         top_p=1,
@@ -168,7 +168,7 @@ async def send_to_chanel():
 
 
 async def scheduler():
-    aioschedule.every().day.at("3:05").do(send_to_chanel)
+    aioschedule.every().day.at("3:15").do(send_to_chanel)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)

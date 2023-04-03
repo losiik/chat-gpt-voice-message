@@ -105,6 +105,7 @@ async def voice_message_absorb(message: types.Message):
 
 
 async def send_to_chanel():
+    print('start gpt request')
     chanel_id = -1001393815765
 
     response = openai.Completion.create(
@@ -169,7 +170,8 @@ async def send_to_chanel():
 
 
 async def scheduler():
-    aioschedule.every().day.at("3:40").do(send_to_chanel)
+    print('in func')
+    aioschedule.every().day.at("3:45").do(send_to_chanel)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)

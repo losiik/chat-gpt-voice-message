@@ -179,7 +179,7 @@ async def scheduler_func():
 
 async def on_startup(_):
     print('bot start')
-    asyncio.create_task(scheduler_func())
+    # asyncio.create_task(scheduler_func())
 
 
 if __name__ == "__main__":
